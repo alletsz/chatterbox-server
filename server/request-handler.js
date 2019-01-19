@@ -43,16 +43,14 @@ var requestHandler = function(request, response) {
   if (request.method === 'GET') {
     statusCode = 200;  
   } else if (request.method === 'POST') {
-    // console.log(request);
     statusCode = 201;
     let body = [];
     request.on('data', (chunk) => {
-      body.push(chunk);
-      console.log('DATA CHUNK', chunk);
-    }).on('end', () => {
-      body = Buffer.concat(body).toString();
+      // console.log('CHHHUUNNKKK', chunk);
+      console.log(chunk.toString('utf8'));
+      results.push(JSON.parse(chunk.toString('utf8')));
+      console.log(results);
     });
-    console.log(body);
   }
 
   // at this point, `body` has the entire request body stored in it as a string
