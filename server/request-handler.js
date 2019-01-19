@@ -40,24 +40,7 @@ var requestHandler = function(request, response) {
 
   // The outgoing status.
   var statusCode;
-  if (request.method === 'GET') {
-    statusCode = 200;  
-  } else if (request.method === 'POST') {
-    statusCode = 201;
-    let body = [];
-    request.on('data', (chunk) => {
-      // console.log('CHHHUUNNKKK', chunk);
-      console.log(chunk.toString('utf8'));
-      results.push(JSON.parse(chunk.toString('utf8')));
-      console.log(results);
-    });
-  } 
 
-  if (request.url !== '/classes/messages') {
-    statusCode = 404;
-  }
-
-  // at this point, `body` has the entire request body stored in it as a string
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
@@ -65,6 +48,27 @@ var requestHandler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'application/json';
+
+  // if (request.method === 'OPTIONS') {
+  //   statusCode = 200;
+  // }
+
+  if (request.method === 'GET' || request.method === 'OPTIONS') {
+    console.log(request.url);
+    statusCode = 200;  
+  } else if (request.method === 'POST') {
+    statusCode = 201;
+    request.on('data', (chunk) => {
+      var msg = JSON.parse(chunk.toString('utf8'));
+      msg.objectId = Date.now() * 2;
+      msg.createdAt = Date.now();
+      results.unshift(msg);
+    });
+  } 
+
+  if (request.url !== '/classes/messages' && request.url !== '/classes/messages?order=-createdAt') {
+    statusCode = 404;
+  }
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
