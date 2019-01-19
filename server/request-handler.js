@@ -51,6 +51,10 @@ var requestHandler = function(request, response) {
       results.push(JSON.parse(chunk.toString('utf8')));
       console.log(results);
     });
+  } 
+
+  if (request.url !== '/classes/messages') {
+    statusCode = 404;
   }
 
   // at this point, `body` has the entire request body stored in it as a string
